@@ -2,6 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import Login from "./Login";
 import ClientList from "./ClientList";
+import ClientDetail from "./ClientDetail";
 
 Vue.use(Router);
 
@@ -16,6 +17,12 @@ export default new Router({
       path: "/clients",
       name: "clients",
       component: ClientList
+    },
+    {
+      path: "/client/:uid",
+      name: "client",
+      component: ClientDetail,
+      props: true
     }
   ]
 });

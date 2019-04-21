@@ -41,8 +41,8 @@ export default {
   data() {
     return {
       user: {
-        username: "",
-        password: ""
+        username: "simpson",
+        password: "simpson"
       },
       error: null
     };
