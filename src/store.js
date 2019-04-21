@@ -8,55 +8,47 @@ const URL = " http://localhost:9080/bank-service/service";
 
 export default new Vuex.Store({
   state: {
-    user: {
-      username: "",
-      password: ""
-    },
+    user: {},
     clients: [],
-    client: {},
-    error: null
+    client: {}
   },
   mutations: {
     user(state, user) {
       state.user = user;
-      state.error = null;
     },
     clients(state, clients) {
       state.clients = clients;
-      state.error = null;
     },
-    error(state, message) {
-      state.error = message;
+    client(state, client) {
+      state.client = client;
     }
   },
   actions: {
-    clients({ commit }, user) {
-      axios
-        .get(`${URL}/client`, {
-          auth: user
-        })
-        .then(({ data }) => {
-          commit("user", user);
-          commit("clients", data);
-        })
-        .catch(error => {
-          if (error.response.status === "401") {
-            commit("error", "Usuario o contraseña incorrectos");
-          } else {
-            commit(
-              "error",
-              "Error al autenticar, por favor intente nuevamente"
-            );
-          }
-        });
+    async login({ commit }, user) {
+      await axios.post(`${URL}/user/login`, null, { auth: user });
+      commit("user", user);
+    },
+    async clients({ commit, state }) {
+      let { data } = await axios.get(`${URL}/client`, { auth: state.user });
+      commit("clients", data);
+    },
+    async client({ commit, state }, uid) {
+      let { data: client } = await axios.get(`${URL}/client/${uid}`, {
+        auth: state.user
+      });
+      let { data: balance } = await axios.get(`${URL}/ledger/${uid}`, {
+        auth: state.user
+      });
+      client.balance = balance;
+      commit("client", client);
     }
   },
   getters: {
-    error({ error }) {
-      return error;
-    },
     clients({ clients }) {
       return clients;
+    },
+    client({ client }) {
+      return client;
     }
   }
 });

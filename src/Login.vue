@@ -43,27 +43,18 @@ export default {
       user: {
         username: "",
         password: ""
-      }
+      },
+      error: null
     };
   },
-  mounted() {
-    this.$store.watch(
-      (state, getters) => getters.clients,
-      newValue => {
-        if (newValue.length >= 0) {
-          this.$router.push({ path: "clients" });
-        }
-      }
-    );
-  },
   methods: {
-    login() {
-      this.$store.dispatch("clients", this.user);
-    }
-  },
-  computed: {
-    error() {
-      return this.$store.getters.error;
+    async login() {
+      try {
+        await this.$store.dispatch("login", this.user);
+        this.$router.push({ path: "clients" });
+      } catch (e) {
+        this.error = "Error al autenticar, por favor intente nuevamente";
+      }
     }
   }
 };
